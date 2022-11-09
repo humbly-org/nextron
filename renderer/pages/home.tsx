@@ -14,7 +14,7 @@ import { useRouter } from 'next/router';
 import { atom, useAtom } from 'jotai';
 import { useContext } from 'react';
 import { SocketContext } from '../context';
-import { testAtom } from '../atom';
+//import { testAtom } from '../atom';
 
 const messagesAtom = atom([]);
 const loadingAtom = atom(false);
@@ -29,7 +29,7 @@ function Home() {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useAtom(messagesAtom);
-  const [test, setTest] = useAtom(testAtom);
+  //const [test, setTest] = useAtom(testAtom);
 
   const messagesId = useId();
 
@@ -44,7 +44,10 @@ function Home() {
 
   const handleSendMessage = async () => {
     // router.push('/next');
-    socket.write(emailRef.current.value);
+
+    socket.write(emailRef.current.value, 'utf8', () => {
+      socket.write("teste")
+    });
     // const messageObject = {
     //   username: emailRef.current.value,
     //   password: passwordRef.current.value,
@@ -145,10 +148,10 @@ function Home() {
           </Button>
           <Button onClick={handleCloseSocket}>desconectar</Button>
           <Button onClick={handleOpenMonitor}>Monitor test</Button>
-          <Button onClick={() => setTest(emailRef.current.value)}>
+          {/* <Button onClick={() => setTest(emailRef.current.value)}>
             Change atom
           </Button>
-          {test}
+          {test} */}
         </Card>
       </Container>
     </React.Fragment>
