@@ -3,7 +3,7 @@ import { Badge } from '@nextui-org/react';
 const squaredMaper = (severity: string) => {
   const obj = {
     high: 'Emergência',
-    medium: 'Urgência',
+    medium: 'Preferencial',
     low: 'Normal',
   };
   return obj[severity];

@@ -1,3 +1,5 @@
+export * from './types';
+
 export const initialsFun = (str) =>
   str
     .split(' ')

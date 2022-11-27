@@ -9,6 +9,7 @@ import {
   StyledCol,
   Text,
 } from '@nextui-org/react';
+import dayjs from 'dayjs';
 import { useAtom } from 'jotai';
 import { patientObjectAtom } from '../../atom';
 import { initialsFun } from '../../utils';
@@ -16,11 +17,11 @@ import { queueSeverity, queueType } from '../../utils/types';
 import { SeverityBadge } from '../SeverityBadge';
 
 interface IPatientMock {
-  id: number;
+  id: number | string;
   name: string;
   cpf: string;
-  startAt: string;
-  endAt: string | null;
+  startAt: string | Date;
+  endAt: string | null | Date;
   queueType: queueType;
   severity: queueSeverity;
   queuePosition: number;
@@ -94,7 +95,7 @@ export const PatientCard = ({
             color: '$white',
           }}
           color='success'>
-          {startAt}
+          {dayjs(startAt).format('HH:mm:ss')}
         </StyledBadge>
       </Row>
       <Row
@@ -143,7 +144,7 @@ export const PatientCard = ({
             endAt ? 'primary' : queueType === 'finished' ? 'error' : 'secondary'
           }>
           {endAt
-            ? endAt
+            ? (endAt as string)
             : queueType === 'finished'
             ? 'Finalizado'
             : 'Em atendimento'}

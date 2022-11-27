@@ -1,5 +1,6 @@
 import { NextUIProvider, globalCss } from '@nextui-org/react';
-import { SocketContext, socket } from '../context';
+import { SocketContext } from '../context';
+import { SocketStore } from '../store/SocketStore';
 
 const globalStyles = globalCss({
   body: { margin: 0, background: 'red', height: '100vh' },
@@ -7,7 +8,7 @@ const globalStyles = globalCss({
 
 function MyApp({ Component, pageProps }) {
   return (
-    <SocketContext.Provider value={socket}>
+    <SocketContext.Provider value={new SocketStore()}>
       <NextUIProvider>
         {globalStyles()}
         <Component {...pageProps} />

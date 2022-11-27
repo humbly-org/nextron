@@ -5,6 +5,17 @@ import { LastCalledPatient } from '../components/LastCalledPatient';
 
 export const MonitorPage = () => {
   const test = useAtomValue(testAtom);
+  const { name, severity, position } = JSON.parse(test);
+
+  const squaredMaper = (severity: string) => {
+    const obj = {
+      high: 'Emergência',
+      medium: 'Preferencial',
+      low: 'Normal',
+    };
+    return obj[severity];
+  };
+
   return (
     <Container
       justify='center'
@@ -13,24 +24,63 @@ export const MonitorPage = () => {
         alignItems: 'center',
         height: '100vh',
         maxWidth: '100vw',
-        p: '$0',
-        m: '$0',
+        padding: '$0',
+        margin: '$0',
       }}>
-      <div>
+      <div
+        style={{
+          maxHeight: '60%',
+          maxWidth: '60%',
+          minWidth: '60%',
+          width: '60%',
+        }}>
         <Text></Text>
         <Card
           css={{
-            maxHeight: '60%',
-            maxWidth: '60%',
+            textAlign: 'center',
+            justifyContent: 'center',
+            alignItems: 'center',
           }}>
-          <Row>
-            <Text>Gregório Sampaio da Silva</Text>
+          <StyledBadge
+            isSquared
+            color={severity === 'high' ? 'error' : 'warning'}
+            css={{
+              fontSize: '$8xl',
+              fontWeight: 'black',
+              width: '100%',
+            }}>
+            {squaredMaper(severity)}
+          </StyledBadge>
+          <Row css={{ padding: '$12' }} justify={'center'}>
+            <Text span weight={'bold'} size='$6xl'>
+              Georgia
+            </Text>
           </Row>{' '}
-          {test}
+          <StyledBadge
+            isSquared
+            css={{
+              fontSize: '$8xl',
+              width: 'fit-content',
+              fontWeight: 'black',
+              mb: '$8',
+            }}>
+            #12
+          </StyledBadge>
+          <StyledBadge
+            isSquared
+            color={'primary'}
+            css={{
+              fontSize: '$8xl',
+              fontWeight: 'black',
+              width: '100%',
+            }}>
+            Guichê 7
+          </StyledBadge>
         </Card>
       </div>
       <div
         style={{
+          width: '100%',
           alignSelf: 'flex-end',
         }}>
         <Text

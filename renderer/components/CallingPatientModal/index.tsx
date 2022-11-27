@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Modal as NUIModal,
   Button,
@@ -15,6 +15,7 @@ import { useCountdown } from '../../hooks';
 interface ICallingPatientModalProps {
   visible: boolean;
   setVisible: (boolean) => void;
+  changeQueue: (code) => void;
 }
 
 const MAX_COUNT = 1;
@@ -23,7 +24,9 @@ const INTERVAL = 3000;
 export default function CallingPatientModal({
   visible,
   setVisible,
+  changeQueue,
 }: ICallingPatientModalProps) {
+  const codeRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const [intervalValue, setIntervalValue] = useState<number>(1000);
   const [count, { startCountdown, stopCountdown, resetCountdown }] =
@@ -52,6 +55,13 @@ export default function CallingPatientModal({
     setVisible(false);
     resetCountdown();
     console.log('closed');
+  };
+
+  const confirmHandler = () => {
+    changeQueue(codeRef.current.value);
+    setVisible(false);
+    resetCountdown();
+    console.log('confirmed');
   };
 
   const modalState = {
@@ -103,7 +113,7 @@ export default function CallingPatientModal({
               flexDirection: 'column',
               justifyContent: 'center',
             }}>
-            <Input bordered placeholder='Código do paciente' />
+            <Input ref={codeRef} bordered placeholder='Código do paciente' />
             <Col
               css={{
                 gap: '$4',
@@ -112,7 +122,7 @@ export default function CallingPatientModal({
               <Button size='sm' color='error' onClick={closeHandler}>
                 Cancelar
               </Button>
-              <Button size='sm' color='success' onClick={closeHandler}>
+              <Button size='sm' color='success' onClick={confirmHandler}>
                 Iniciar
               </Button>
             </Col>

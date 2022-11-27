@@ -15,7 +15,7 @@ export const PatientMock = {
 };
 
 export const PatientMockFinished = {
-  id: '1',
+  id: '2',
   name: 'João Víctor Pereira de Souza e Miranda da Silva',
   cpf: '123.456.789-00',
   startAt: date,
@@ -26,7 +26,7 @@ export const PatientMockFinished = {
 };
 
 export const PatientMockInProgress = {
-  id: '1',
+  id: '3',
   name: 'João Víctor Pereira de Souza e Miranda da Silva',
   cpf: '123.456.789-00',
   startAt: date,

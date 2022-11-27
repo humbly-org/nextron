@@ -3,7 +3,11 @@ import { useRouter } from 'next/router';
 import { HomeIcon } from '../../Icons/HomeIcon';
 import { TvIcon } from '../../Icons/TvIcon';
 
-export const Menu = ({ ...props }) => {
+interface IMenu {
+  disconnect: () => void;
+}
+
+export const Menu = ({ disconnect, ...props }: IMenu) => {
   const { theme } = useTheme();
   const router = useRouter();
   return (
@@ -68,7 +72,10 @@ export const Menu = ({ ...props }) => {
         <Button
           css={{ fontWeight: '$black', p: '$6' }}
           color={'error'}
-          onClick={() => router.push('/home')}
+          onClick={() => {
+            disconnect();
+            router.push('/home');
+          }}
           size={'xs'}>
           Desconectar
         </Button>

@@ -1,66 +1,18 @@
-import React, { useEffect, useId, useRef, useState } from 'react';
-import Head from 'next/head';
-import {
-  Button,
-  Card,
-  Container,
-  Input,
-  Loading,
-  Text,
-} from '@nextui-org/react';
+import React, { useRef } from 'react';
+import { observer } from 'mobx-react-lite';
+import { Button, Card, Container, Input, Text } from '@nextui-org/react';
 import Image from 'next/image';
-import { useRouter } from 'next/router';
 
-import { atom, useAtom } from 'jotai';
 import { useContext } from 'react';
 import { SocketContext } from '../context';
-import { testAtom } from '../atom';
-
-const messagesAtom = atom([]);
-const loadingAtom = atom(false);
+import { useRouter } from 'next/router';
 
 function Home() {
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
-
   const router = useRouter();
-
-  const socket = useContext(SocketContext);
-  const [message, setMessage] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [messages, setMessages] = useAtom(messagesAtom);
-  const [test, setTest] = useAtom(testAtom);
-
-  const messagesId = useId();
-
-  useEffect(() => {
-    socket.on('msgToClient', (message: string) => {
-      setMessages((messages) => [...messages, message]);
-    });
-    socket.on('userLogin', (accepted: string) => {
-      if (accepted) router.push('/next');
-    });
-  }, [socket]);
-
-  const handleSendMessage = async () => {
-    // router.push('/next');
-    socket.write(emailRef.current.value);
-    // const messageObject = {
-    //   username: emailRef.current.value,
-    //   password: passwordRef.current.value,
-    // };
-    // setTimeout(() => {
-    //   socket.emit('userLogin', messageObject);
-    //   setLoading(false);
-    // }, 4000);
-  };
-
-  const handleCloseSocket = () => {
-    console.log(socket);
-    socket.destroy();
-  };
-
-  // console.log(loading);
+  const store = useContext(SocketContext);
+  const { socket, connect, destroy, callPatient } = store;
 
   const handleOpenMonitor = () => {
     window.open(
@@ -70,11 +22,12 @@ function Home() {
     );
   };
 
+  const handleConnect = () => {
+    router.push('/next');
+  };
+
   return (
     <React.Fragment>
-      <Head>
-        <title>Home - Nextron (with-typescript)</title>
-      </Head>
       <Container
         css={{
           maxWidth: '100%',
@@ -122,37 +75,23 @@ function Home() {
               placeholder='Senha'
             />
           </div>
-          <Container
-            css={{
-              display: 'flex',
-              flexDirection: 'column',
-            }}>
-            {messages.map((message, i) => (
-              <Text key={`${messagesId}-${i}`}>{message}</Text>
-            ))}
-          </Container>
           <Button
-            onClick={handleSendMessage}
+            onClick={handleConnect}
             css={{
               w: '200px',
             }}
             color={'success'}>
-            {loading === true ? (
-              <Loading type='points-opacity' color='currentColor' size='sm' />
-            ) : (
-              'Conectar'
-            )}
+            Connect
           </Button>
-          <Button onClick={handleCloseSocket}>desconectar</Button>
+          <Button onClick={destroy}>Desconectar</Button>
           <Button onClick={handleOpenMonitor}>Monitor test</Button>
-          <Button onClick={() => setTest(emailRef.current.value)}>
-            Change atom
+          <Button onClick={() => callPatient('46312914860')}>
+            Call Patient
           </Button>
-          {test}
         </Card>
       </Container>
     </React.Fragment>
   );
 }
 
-export default Home;
+export default observer(Home);

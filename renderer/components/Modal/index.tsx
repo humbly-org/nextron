@@ -12,6 +12,7 @@ import {
 interface IModalProps {
   visible: boolean;
   setVisible: (boolean) => void;
+  callPatient: (cpf) => void;
   setCallingPatientVisible: (boolean) => void;
   patientObject: {
     id: number;
@@ -25,17 +26,17 @@ export default function Modal({
   visible,
   setVisible,
   setCallingPatientVisible,
+  callPatient,
 }: IModalProps) {
+  const { name = 'Fulaninho', cpf = '218.321.542-34' } = patientObject;
   const closeHandler = () => {
     setVisible(false);
   };
-
   const confirmHandler = () => {
+    callPatient(cpf);
     setVisible(false);
     setCallingPatientVisible(true);
   };
-
-  const { name = 'Fulaninho', cpf = '218.321.542-34' } = patientObject;
 
   return (
     <NUIModal
