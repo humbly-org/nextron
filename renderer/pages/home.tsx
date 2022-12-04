@@ -83,11 +83,7 @@ function Home() {
             color={'success'}>
             Connect
           </Button>
-          <Button onClick={destroy}>Desconectar</Button>
-          <Button onClick={handleOpenMonitor}>Monitor test</Button>
-          <Button onClick={() => callPatient('46312914860')}>
-            Call Patient
-          </Button>
+          <Button onClick={handleOpenMonitor}>montitor</Button>
         </Card>
       </Container>
     </React.Fragment>

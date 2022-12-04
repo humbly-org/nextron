@@ -1,41 +1,28 @@
 import React from 'react';
-import {
-  Modal as NUIModal,
-  Button,
-  Text,
-  Input,
-  Row,
-  Checkbox,
-  Col,
-} from '@nextui-org/react';
+import { Modal as NUIModal, Button, Text, Row, Col } from '@nextui-org/react';
+import { PatientType } from '../../types';
+import { useAtom, useSetAtom } from 'jotai';
+import { calledPatientAtom, inProgressModalAtom } from '../../atom';
 
-interface IModalProps {
-  visible: boolean;
-  setVisible: (boolean) => void;
-  callPatient: (cpf) => void;
-  setCallingPatientVisible: (boolean) => void;
-  patientObject: {
-    id: number;
-    name: string;
-    cpf: string;
-  };
+interface IOnHoldModalProps {
+  updateQueue: (cpf) => void;
+  patientObject?: PatientType;
 }
 
-export default function Modal({
+export default function InProgressModal({
   patientObject,
-  visible,
-  setVisible,
-  setCallingPatientVisible,
-  callPatient,
-}: IModalProps) {
-  const { name = 'Fulaninho', cpf = '218.321.542-34' } = patientObject;
+  updateQueue,
+}: IOnHoldModalProps) {
+  const setCalledPatient = useSetAtom(calledPatientAtom);
+  const [visible, setVisible] = useAtom(inProgressModalAtom);
+  const { name, cpf } = patientObject || { name: '', cpf: '' };
   const closeHandler = () => {
     setVisible(false);
   };
   const confirmHandler = () => {
-    callPatient(cpf);
+    setCalledPatient(patientObject);
+    updateQueue(cpf);
     setVisible(false);
-    setCallingPatientVisible(true);
   };
 
   return (
@@ -52,7 +39,7 @@ export default function Modal({
           }}
           weight='extrabold'
           size={'$3xl'}>
-          Você está prestes a chamar o paciente:
+          Você está prestes a finalizar o atendimento do paciente:
           <Text
             css={{
               mt: '$4',
@@ -60,7 +47,7 @@ export default function Modal({
             as={'p'}
             size='$xl'
             weight={'normal'}>
-            {name}
+            {name || ''}
           </Text>
         </Text>
       </NUIModal.Header>
@@ -74,7 +61,7 @@ export default function Modal({
           CPF:
         </Text>
         <Text size={24} weight='black'>
-          {cpf}
+          {cpf || ''}
         </Text>
       </Col>
       <NUIModal.Footer>
@@ -87,7 +74,7 @@ export default function Modal({
             Cancelar
           </Button>
           <Button auto color='success' onClick={confirmHandler}>
-            Confirmar
+            Finalizar
           </Button>
         </Row>
       </NUIModal.Footer>

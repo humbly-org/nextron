@@ -4,6 +4,7 @@ import { createWindow } from './helpers';
 import installExtension, {
   REACT_DEVELOPER_TOOLS,
 } from 'electron-devtools-installer';
+import * as remote from '@electron/remote';
 
 const isProd: boolean = process.env.NODE_ENV === 'production';
 
@@ -39,8 +40,7 @@ if (isProd) {
   }
 
   const mainWindow = createWindow('main', {
-    width: 1000,
-    height: 600,
+    fullscreen: true,
     title: 'Humbly',
     icon: '../renderer/public/images/logo.png',
   });

@@ -4,9 +4,15 @@ import {
   BrowserWindowConstructorOptions,
 } from 'electron';
 import Store from 'electron-store';
+import path from 'path';
+import * as remoteMain from '@electron/remote/main';
 
-export default (windowName: string, options: BrowserWindowConstructorOptions): BrowserWindow => {
+export default (
+  windowName: string,
+  options: BrowserWindowConstructorOptions,
+): BrowserWindow => {
   const key = 'window-state';
+  remoteMain.initialize();
   const name = `window-state-${windowName}`;
   const store = new Store({ name });
   const defaultSize = {
@@ -46,8 +52,8 @@ export default (windowName: string, options: BrowserWindowConstructorOptions): B
     });
   };
 
-  const ensureVisibleOnSomeDisplay = windowState => {
-    const visible = screen.getAllDisplays().some(display => {
+  const ensureVisibleOnSomeDisplay = (windowState) => {
+    const visible = screen.getAllDisplays().some((display) => {
       return windowWithinBounds(windowState, display.bounds);
     });
     if (!visible) {
@@ -73,10 +79,12 @@ export default (windowName: string, options: BrowserWindowConstructorOptions): B
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
+      preload: path.join(__dirname, 'preload.js'),
       ...options.webPreferences,
     },
   };
-  win = new BrowserWindow(browserOptions);
+  win = new BrowserWindow({ ...browserOptions });
+  remoteMain.enable(win.webContents);
 
   win.on('close', saveState);
 

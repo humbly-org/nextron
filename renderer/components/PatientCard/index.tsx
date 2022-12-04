@@ -10,23 +10,12 @@ import {
   Text,
 } from '@nextui-org/react';
 import dayjs from 'dayjs';
-import { useAtom } from 'jotai';
-import { patientObjectAtom } from '../../atom';
+import { PrimitiveAtom, useAtom, useSetAtom } from 'jotai';
+import { inProgressModalAtom, patientObjectAtom } from '../../atom';
+import { PatientType } from '../../types';
 import { initialsFun } from '../../utils';
 import { queueSeverity, queueType } from '../../utils/types';
 import { SeverityBadge } from '../SeverityBadge';
-
-interface IPatientMock {
-  id: number | string;
-  name: string;
-  cpf: string;
-  startAt: string | Date;
-  endAt: string | null | Date;
-  queueType: queueType;
-  severity: queueSeverity;
-  queuePosition: number;
-  openModal: (boolean) => void;
-}
 
 const queueTypeMapper = (title: string) => {
   const obj = {
@@ -43,33 +32,37 @@ const queueTypeMapper = (title: string) => {
   return obj[title];
 };
 
-export const PatientCard = ({
-  id,
-  name,
-  cpf,
-  startAt,
-  endAt,
-  queueType,
-  severity,
-  openModal,
-  queuePosition,
-}: IPatientMock) => {
-  const { color } = queueTypeMapper(queueType);
-  const [, setPatientObject] = useAtom(patientObjectAtom);
+interface IPatientCard {
+  atom: PrimitiveAtom<PatientType>;
+  openModal: (boolean: boolean) => void;
+}
 
-  const openModalHandler = () => {
-    setPatientObject({
-      id,
-      name,
-      cpf,
-    });
-    openModal(true);
+export const PatientCard = ({ atom, openModal }: IPatientCard) => {
+  const setPatientObject = useSetAtom(patientObjectAtom);
+  const setVisibleInProgressModal = useSetAtom(inProgressModalAtom);
+  const [patient] = useAtom(atom);
+  const { name, severity, queueType, cpf, endAt, startAt } = patient;
+  const { color } = queueTypeMapper(patient.queueType);
+
+  const queueTypeModal = (queueType: any) => {
+    const obj = {
+      onHold: () => {
+        setPatientObject(patient);
+        openModal(true);
+      },
+      inProgress: () => {
+        setPatientObject(patient);
+        setVisibleInProgressModal(true);
+        console.log('inProgress');
+      },
+    };
+    if (obj[queueType]) return obj[queueType]();
   };
 
   return (
     <Card
       isHoverable
-      variant='flat'
+      variant='bordered'
       borderWeight='bold'
       css={{
         border: '2px solid',
@@ -134,27 +127,35 @@ export const PatientCard = ({
         </div>
       </Row>
       <Row justify='space-between' align='flex-end'>
-        <StyledBadge
-          isSquared
-          as={'div'}
-          css={{
-            color: '$white',
-          }}
-          color={
-            endAt ? 'primary' : queueType === 'finished' ? 'error' : 'secondary'
-          }>
-          {endAt
-            ? (endAt as string)
-            : queueType === 'finished'
-            ? 'Finalizado'
-            : 'Em atendimento'}
-        </StyledBadge>
+        {queueType !== 'onHold' ? (
+          <StyledBadge
+            isSquared
+            as={'div'}
+            css={{
+              color: '$white',
+            }}
+            color={
+              endAt
+                ? 'primary'
+                : queueType === 'finished'
+                ? 'error'
+                : 'secondary'
+            }>
+            {endAt
+              ? (endAt as unknown as string)
+              : queueType === 'finished'
+              ? 'Finalizado'
+              : 'Em atendimento'}
+          </StyledBadge>
+        ) : (
+          ''
+        )}
         <Row
           justify='flex-end'
           css={{
             gap: '$4',
           }}>
-          {queueType !== 'onHold' && (
+          {queueType == 'inProgress' && (
             <Button
               size={'xs'}
               disabled
@@ -164,14 +165,17 @@ export const PatientCard = ({
               Solicitação
             </Button>
           )}
-          <Button
-            size={'xs'}
-            onClick={openModalHandler}
-            css={{
-              backgroundColor: '$success',
-            }}>
-            Chamar
-          </Button>
+          {queueType !== 'finished' && (
+            <Button
+              size={'xs'}
+              onClick={() => queueTypeModal(queueType) as any}
+              css={{
+                backgroundColor:
+                  queueType == 'inProgress' ? '$error' : '$success',
+              }}>
+              {queueType == 'inProgress' ? 'Finalizar' : 'Chamar'}
+            </Button>
+          )}
         </Row>
       </Row>
     </Card>

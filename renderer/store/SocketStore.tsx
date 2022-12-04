@@ -4,8 +4,10 @@ import { parseMessage } from '../utils';
 
 type SocketType = net.Socket | null;
 export class SocketStore {
-  socket = null as SocketType;
+  connected = false;
+  socket = null as SocketType | string;
   constructor() {
+    this.connected = false;
     makeAutoObservable(this);
   }
 
@@ -13,11 +15,21 @@ export class SocketStore {
     if (this.socket) {
       return;
     }
-    this.socket = await net.createConnection({
-      port: 3322,
-      host: 'localhost',
-    });
-    this.hospitalLogin();
+    console.log('running');
+    this.socket = await net
+      .createConnection(
+        {
+          port: 3322,
+          host: 'localhost',
+        },
+        () => {
+          this.connected = true;
+          this.hospitalLogin();
+        },
+      )
+      .on('error', (err) => {
+        this.connected = false;
+      });
   };
 
   hospitalLogin = () => {
@@ -26,11 +38,12 @@ export class SocketStore {
     });
   };
 
-  changeQueue = (cpf: string) => {
+  changeQueue = (cpf: string, nextQueue: string) => {
     this.sendMessage({
       message: 'changeQueue',
       body: {
         patientCpf: cpf,
+        nextQueue: nextQueue,
       },
     });
   };
@@ -48,16 +61,21 @@ export class SocketStore {
     this.sendMessage({
       message: 'destroy',
     });
-    this.socket.destroy();
+    (this.socket as SocketType).destroy();
   };
 
   sendMessage = (message: string | object) => {
-    if (this.socket?.write) {
-      this.socket.write(JSON.stringify(message), 'utf8', (e) => {
-        if (e) {
-          console.error(e);
-        }
-      });
+    if ((this.socket as SocketType)?.write) {
+      this.connected = true;
+      (this.socket as SocketType).write(
+        JSON.stringify(message),
+        'utf8',
+        (e) => {
+          if (e) {
+            console.error(e);
+          }
+        },
+      );
     }
   };
 }
