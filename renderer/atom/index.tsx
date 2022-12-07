@@ -35,23 +35,19 @@ export const firstPatientsAtom = atom(
   },
 );
 
-export const onHoldPatientsAtom = atom<PrimitiveAtom<PatientType>[]>((get) => {
+export const onHoldPatientsAtom = atom<Atom<PatientType>[]>((get) => {
   const patients = get(patientsAtom);
   console.log(patients);
   return patients.filter((atom) => get(atom).queueType === 'onHold');
 });
-export const inProgressPatientsAtom = atom<PrimitiveAtom<PatientType>[]>(
-  (get) => {
-    const patients = get(patientsAtom);
-    return patients.filter((atom) => get(atom).queueType === 'inProgress');
-  },
-);
-export const finishedPatientsAtom = atom<PrimitiveAtom<PatientType>[]>(
-  (get) => {
-    const patients = get(patientsAtom);
-    return patients.filter((atom) => get(atom).queueType === 'finished');
-  },
-);
+export const inProgressPatientsAtom = atom<Atom<PatientType>[]>((get) => {
+  const patients = get(patientsAtom);
+  return patients.filter((atom) => get(atom).queueType === 'inProgress');
+});
+export const finishedPatientsAtom = atom<Atom<PatientType>[]>((get) => {
+  const patients = get(patientsAtom);
+  return patients.filter((atom) => get(atom).queueType === 'finished');
+});
 
 export const addPatientAtom = atom(null, (get, set, patient: PatientType) => {
   const patients = get(patientsAtom);

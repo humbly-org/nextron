@@ -44,6 +44,7 @@ export class SocketStore {
       body: {
         patientCpf: cpf,
         nextQueue: nextQueue,
+        requestedOrigin: 'HOSPITAL',
       },
     });
   };

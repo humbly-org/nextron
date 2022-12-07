@@ -18,6 +18,7 @@ export const AnimationQueue = ({
   const [patients] = useAtom<PrimitiveAtom<PatientType>[]>(atom);
   const transitions = useTransition(patients, {
     keys: (patient) => patient.toString(),
+    sort: (a: any, b: any) => a.init.queuePosition - b.init.queuePosition,
     delay: 500,
     from: { opacity: 0, transform: 'translate3d(0, -40px, 0)' },
     enter: { opacity: 1, transform: 'translate3d(0, 0px, 0)' },

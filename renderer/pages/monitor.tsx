@@ -15,8 +15,7 @@ import {
   useChain,
   config,
 } from '@react-spring/web';
-import { calledPatientAtom, patientObjectAtom } from '../atom';
-import { LastCalledPatient } from '../components/LastCalledPatient';
+import { calledPatientAtom } from '../atom';
 
 export const MonitorPage = () => {
   const calledPatient = useAtomValue(calledPatientAtom);
@@ -132,36 +131,6 @@ export const MonitorPage = () => {
             </Card>
           </a.div>
         </a.div>
-      </div>
-      <div
-        style={{
-          width: '100%',
-          alignSelf: 'flex-end',
-        }}>
-        <Text
-          css={{
-            ml: '$4',
-          }}
-          weight={'black'}
-          size='$3xl'>
-          Últimos chamados
-        </Text>
-        <StyledBadge
-          color='primary'
-          css={{
-            gap: '$4',
-            p: '$4',
-            display: 'grid',
-            gridTemplateColumns: 'repeat(4, 1fr)',
-            gridTemplateRows: '1fr',
-            borderRadius: '0',
-            width: '100%',
-            height: '15%',
-            maxHeight: '100px',
-            fontSize: '1.6rem',
-          }}>
-          <Button onClick={handleReset}>reset</Button>
-        </StyledBadge>
       </div>
     </Container>
   );
