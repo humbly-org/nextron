@@ -50,9 +50,10 @@ function Next() {
 
   const handleCallPatient = (code) => {
     if (code === patientCode) {
-      return changeQueue(patientObject.cpf, 'inProgress');
+      changeQueue(patientObject.cpf, 'inProgress');
+      return true;
     } else {
-      return console.log('Not the same patient');
+      return false;
     }
   };
 
@@ -113,10 +114,6 @@ function Next() {
       });
     }
   }, [socket]);
-
-  useEffect(() => {
-    console.log('webContents');
-  });
 
   return (
     <React.Fragment>

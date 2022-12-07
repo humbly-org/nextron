@@ -7,6 +7,14 @@ interface IMenu {
   disconnect: () => void;
 }
 
+const handleOpenMonitor = () => {
+  window.open(
+    '/monitor',
+    '_blank',
+    'top=500, left=200,contextIsolation=no,nodeIntegration=yes',
+  );
+};
+
 export const Menu = ({ disconnect, ...props }: IMenu) => {
   const { theme } = useTheme();
   const router = useRouter();
@@ -51,10 +59,30 @@ export const Menu = ({ disconnect, ...props }: IMenu) => {
             display: 'flex',
             flexDirection: 'column',
           }}>
-          <TvIcon fill={'white'} />
-          <Text b color={'white'} size={'$xs'}>
-            Monitor
-          </Text>
+          <Button
+            ghost
+            color={'error'}
+            style={{
+              border: '0px solid white',
+              display: 'flex',
+              flexDirection: 'row',
+              lineHeight: 'normal',
+            }}
+            onClick={handleOpenMonitor}>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0px',
+              }}>
+              <div>
+                <TvIcon as={'div'} fill={'white'} />
+              </div>
+              <Text as={'div'} b color={'white'} size={'$xs'}>
+                Monitor
+              </Text>
+            </div>
+          </Button>
         </Col>
       </Card>
       <Card

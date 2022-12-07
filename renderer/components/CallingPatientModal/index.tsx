@@ -15,7 +15,7 @@ import { useCountdown } from '../../hooks';
 interface ICallingPatientModalProps {
   visible: boolean;
   setVisible: (boolean) => void;
-  changeQueue: (code) => void;
+  changeQueue: (code) => boolean;
 }
 
 const MAX_COUNT = 1;
@@ -27,6 +27,7 @@ export default function CallingPatientModal({
   changeQueue,
 }: ICallingPatientModalProps) {
   const codeRef = useRef(null);
+  const [errorMessage, setErrorMessage] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [intervalValue, setIntervalValue] = useState<number>(1000);
   const [count, { startCountdown, stopCountdown, resetCountdown }] =
@@ -55,13 +56,21 @@ export default function CallingPatientModal({
     setVisible(false);
     resetCountdown();
     console.log('closed');
+    setErrorMessage('');
   };
 
   const confirmHandler = () => {
-    changeQueue(codeRef.current.value);
-    setVisible(false);
-    resetCountdown();
-    console.log('confirmed');
+    const isValid = changeQueue(codeRef.current.value);
+    if (isValid) {
+      setVisible(false);
+      resetCountdown();
+      setErrorMessage('');
+      console.log('confirmed');
+    } else {
+      codeRef.current.value = '';
+      codeRef.current.focus();
+      setErrorMessage('Código inválido!');
+    }
   };
 
   const modalState = {
@@ -98,22 +107,42 @@ export default function CallingPatientModal({
     ),
     finished: (
       <>
-        <Text>
-          <Text weight={'extrabold'} size='$xl'>
-            O paciente chegou!
-          </Text>
-          <Text weight={'normal'} size='$sm'>
-            peça o código do paciente e digite abaixo:
-          </Text>
+        <div
+          style={{
+            justifyContent: 'center',
+            display: 'flex',
+            flexDirection: 'column',
+            height: '100%',
+          }}>
+          <div>
+            <Text weight={'extrabold'} size='$xl'>
+              O paciente chegou!
+            </Text>
+            <Text weight={'normal'} size='$sm'>
+              peça o código do paciente e digite abaixo:
+            </Text>
+          </div>
           <Col
             css={{
               mt: '$4',
-              gap: '$8',
+              gap: '$12',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'center',
             }}>
-            <Input ref={codeRef} bordered placeholder='Código do paciente' />
+            <Input
+              helperText={errorMessage ?? ''}
+              ref={codeRef}
+              bordered
+              size='lg'
+              style={{
+                fontWeight: 'bold',
+                padding: '8px',
+                fontSize: '26px',
+              }}
+              color={errorMessage ? 'error' : 'primary'}
+              placeholder='Código do paciente'
+            />
             <Col
               css={{
                 gap: '$4',
@@ -127,7 +156,7 @@ export default function CallingPatientModal({
               </Button>
             </Col>
           </Col>
-        </Text>
+        </div>
       </>
     ),
   };
@@ -141,7 +170,7 @@ export default function CallingPatientModal({
       css={{
         height: '300px',
         p: '$16',
-        alignItems: 'center',
+        alignItems: 'space-evelyn',
         justifyContent: 'center',
       }}
       onClose={closeHandler}>

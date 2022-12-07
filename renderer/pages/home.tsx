@@ -14,14 +14,6 @@ function Home() {
   const store = useContext(SocketContext);
   const { socket, connect, destroy, callPatient } = store;
 
-  const handleOpenMonitor = () => {
-    window.open(
-      '/monitor',
-      '_blank',
-      'top=500, left=200,contextIsolation=no,nodeIntegration=yes',
-    );
-  };
-
   const handleConnect = () => {
     router.push('/next');
   };
@@ -83,7 +75,6 @@ function Home() {
             color={'success'}>
             Connect
           </Button>
-          <Button onClick={handleOpenMonitor}>montitor</Button>
         </Card>
       </Container>
     </React.Fragment>
